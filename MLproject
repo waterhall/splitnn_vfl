@@ -1,0 +1,26 @@
+name: VFL
+
+conda_env: vfl.yml
+
+entry_points:
+  main:
+    parameters:
+      encoded_config: {type: string}
+    command: "python vfl_main.py {encoded_config}"
+  prepare:
+    command: "sh generate_all.sh;"
+  pytorch:
+    parameters:
+      config_file: {type: path, default: samples/mnist_pytorch.yml}
+      random_seed: {type: int, default: 0}
+    command: "python pytorch_main.py {config_file} {random_seed}"
+  framework:
+    parameters:
+      config_file: {type: path, default: samples/mnist_local.yml}
+      random_seed: {type: int, default: 0}
+    command: "python main.py {config_file} {random_seed}"
+  networked:
+    parameters:
+      config_file: {type: path, default: samples/mnist.yml}
+      random_seed: {type: int, default: 0}
+    command: "python start_clients.py {config_file} {random_seed}"

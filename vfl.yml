@@ -1,0 +1,28 @@
+name: vfl
+channels:
+  - defaults
+dependencies:
+  - python==3.7
+  - pip=20
+  - pytorch::pytorch==1.4.0
+  - pytorch::torchvision==0.5.0
+  - pyyaml
+  - cudatoolkit=10.1
+  - conda-forge::phe
+  - numba::numba
+  - conda-forge::sympy
+  - numpy==1.18.5
+  - websockets==8.1
+  - conda-forge::pyopenssl==19.0.0
+  - gmpy2
+  - fabric
+  - numpy
+  - scikit-learn
+  - pip:
+    - git+https://github.com/eric-vader/PySyft.git@eric
+    - bitarray
+    - pycryptodome
+    - mlflow
+    - stopwatch.py
+
+# - syft==0.2.9

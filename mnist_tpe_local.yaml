@@ -1,0 +1,114 @@
+name: MNIST-tpe
+training_iters: 250
+validation:
+  N_test: 10000
+  N_train: 60000
+batch_size: 64
+random_seed: 0
+is_data_aligned: False
+models:
+  gc_model:
+    ports:
+      submodel0: 8600
+      submodel1: 8601
+      submodel2: 8602
+    checkpoint_dir: '/tmp/gc_model'
+    data_path: ~/files/MNIST/dataset/Y_{}.pkl
+    model_class: GCNet
+    model_def_path: models.tpe_def
+    model_path: ./models/MNIST/submodel_3_statedict
+    param:
+      loss_fn: CrossEntropyLoss
+      model_args:
+        D_in: 30
+        D_out: 10
+      optimizer:
+        lr: 0.0001
+        name: RMSprop
+  sub_models:
+    submodel0:
+      checkpoint_dir: '/tmp/submodel0'
+      data_path: ~/files/MNIST/dataset/X_{}_0.pkl
+      model_class: TwoLayerNet
+      model_def_path: models.tpe_def
+      model_path: ./models/MNIST/submodel_0_statedict
+      param:
+        model_args:
+          D_in: 261
+          H: 100
+          D_out: 10
+        optimizer:
+          lr: 0.0001
+          name: RMSprop
+    submodel1:
+      checkpoint_dir: '/tmp/submodel1'
+      data_path: ~/files/MNIST/dataset/X_{}_1.pkl
+      model_class: TwoLayerNet
+      model_def_path: models.tpe_def
+      model_path: ./models/MNIST/submodel_1_statedict
+      param:
+        model_args:
+          D_in: 261
+          H: 100
+          D_out: 10
+        optimizer:
+          lr: 0.0001
+          name: RMSprop
+    submodel2:
+      checkpoint_dir: '/tmp/submodel2'
+      data_path: ~/files/MNIST/dataset/X_{}_2.pkl
+      model_class: TwoLayerNet
+      model_def_path: models.tpe_def
+      model_path: ./models/MNIST/submodel_2_statedict
+      param:
+        model_args:
+          D_in: 262
+          H: 100
+          D_out: 10
+        optimizer:
+          lr: 0.0001
+          name: RMSprop
+allocations:
+  gc_model: ba
+  trusted_party: ba
+  submodel0: ba
+  submodel1: i1
+  submodel2: i2
+trusted_party:
+  tp_class: ThresholdPaillierTP
+  tp_def_path: tpe_layers
+  ports:
+    gc_model: 8800
+    submodel0: 8700
+    submodel1: 8701
+    submodel2: 8702
+  param: 
+    n_length: 160
+hosts:
+  ba:
+    ports:
+      alignment: 8500
+    conn_param:
+      host: "localhost"
+      user: "Eric_Vader"
+      connect_kwargs:
+        key_filename: "./ssh_keys/ba.key"
+  i1:
+    ports:
+      alignment: 8501
+    conn_param:
+      host: "localhost"
+      user: "Eric_Vader"
+      connect_kwargs:
+        key_filename: "./ssh_keys/i1.key"
+  i2:
+    ports:
+      alignment: 8502
+    conn_param:
+      host: "localhost"
+      user: "Eric_Vader"
+      connect_kwargs:
+        key_filename: "./ssh_keys/i2.key"
+mlflow:
+  preamble: ulimit -Sn 65536; source /etc/profile; conda activate cs6203;
+  mlflow_run: mlflow run /home/Eric_Vader/Workspace/CS6203_proj -P encoded_config="{encoded_config}"
